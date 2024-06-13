@@ -118,6 +118,12 @@ class TrainerBase:
         self.storage: EventStorage
         _log_api_usage("trainer." + self.__class__.__name__)
 
+        # NOTE: If the first iteration creates NaN gradients
+        # (e.g. due to a high scaling factor and thus gradient overflow),
+        # the optimizer.step() will be skipped and you might get this warning.
+        # See:https://discuss.pytorch.org/t/optimizer-step-before-lr-scheduler-step-error-using-gradscaler/92930
+
+
     def register_hooks(self, hooks: List[Optional[HookBase]]) -> None:
         """
         Register hooks to the trainer. The hooks are executed in the order
@@ -220,7 +226,9 @@ class TrainerBase:
                     h.load_state_dict(value)
                     break
             else:
-                logger.warning(f"Cannot find the hook '{key}', its state_dict is ignored.")
+                logger.warning(
+                    f"Cannot find the hook '{key}', its state_dict is ignored."
+                )
 
 
 class SimpleTrainer(TrainerBase):
@@ -405,7 +413,8 @@ class SimpleTrainer(TrainerBase):
 
             # average the rest metrics
             metrics_dict = {
-                k: np.mean([x[k] for x in all_metrics_dict]) for k in all_metrics_dict[0].keys()
+                k: np.mean([x[k] for x in all_metrics_dict])
+                for k in all_metrics_dict[0].keys()
             }
             total_losses_reduced = sum(metrics_dict.values())
             if not np.isfinite(total_losses_reduced):
@@ -459,13 +468,19 @@ class AMPTrainer(SimpleTrainer):
             grad_scaler: torch GradScaler to automatically scale gradients.
             precision: torch.dtype as the target precision to cast to in computations
         """
-        unsupported = "AMPTrainer does not support single-process multi-device training!"
+        unsupported = (
+            "AMPTrainer does not support single-process multi-device training!"
+        )
         if isinstance(model, DistributedDataParallel):
             assert not (model.device_ids and len(model.device_ids) > 1), unsupported
         assert not isinstance(model, DataParallel), unsupported
 
         super().__init__(
-            model, data_loader, optimizer, gather_metric_period, zero_grad_before_forward
+            model,
+            data_loader,
+            optimizer,
+            gather_metric_period,
+            zero_grad_before_forward,
         )
 
         if grad_scaler is None:
@@ -476,12 +491,16 @@ class AMPTrainer(SimpleTrainer):
         self.precision = precision
         self.log_grad_scaler = log_grad_scaler
 
+        self.skip_lr_sched = False
+
     def run_step(self):
         """
         Implement the AMP training logic.
         """
         assert self.model.training, "[AMPTrainer] model was changed to eval mode!"
-        assert torch.cuda.is_available(), "[AMPTrainer] CUDA is required for AMP training!"
+        assert (
+            torch.cuda.is_available()
+        ), "[AMPTrainer] CUDA is required for AMP training!"
         from torch.cuda.amp import autocast
 
         start = time.perf_counter()
@@ -518,7 +537,13 @@ class AMPTrainer(SimpleTrainer):
             self._write_metrics(loss_dict, data_time)
 
         self.grad_scaler.step(self.optimizer)
+        scale_tmp = self.grad_scaler.get_scale()
         self.grad_scaler.update()
+        # NOTE: If the first iteration creates NaN gradients
+        # (e.g. due to a high scaling factor and thus gradient overflow),
+        # the optimizer.step() will be skipped and you might get this warning.
+        # See:https://discuss.pytorch.org/t/optimizer-step-before-lr-scheduler-step-error-using-gradscaler/92930
+        self.skip_lr_sched = scale_tmp > self.grad_scaler.get_scale()
 
     def state_dict(self):
         ret = super().state_dict()

@@ -356,6 +356,11 @@ class LRScheduler(HookBase):
     def after_step(self):
         lr = self._optimizer.param_groups[self._best_param_group_id]["lr"]
         self.trainer.storage.put_scalar("lr", lr, smoothing_hint=False)
+
+        if hasattr(self.trainer, "skip_lr_sched") and self.trainer.skip_lr_sched:
+            logger = logging.getLogger(__name__)
+            logger.info("May be first optimizer grad Nan, skip updating scheduler")
+            return
         self.scheduler.step()
 
     @property

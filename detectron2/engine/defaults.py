@@ -397,6 +397,13 @@ class DefaultTrainer(TrainerBase):
 
         self.register_hooks(self.build_hooks())
 
+    @property
+    def skip_lr_sched(self):
+        if hasattr(self._trainer, "skip_lr_sched"):
+            return self._trainer.skip_lr_sched
+        else:
+            return False
+
     def resume_or_load(self, resume=True):
         """
         If `resume==True` and `cfg.OUTPUT_DIR` contains the last checkpoint (defined by
