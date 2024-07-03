@@ -110,8 +110,8 @@ to work with recursive instantiation.
 
 We provide some configs in the model zoo using the LazyConfig system, for example:
 
-* [common baselines](../../configs/common/).
-* [new Mask R-CNN baselines](../../configs/new_baselines/)
+* [common baselines](../../../configs/common/).
+* [new Mask R-CNN baselines](../../../configs/new_baselines/)
 
 After installing detectron2, they can be loaded by the model zoo API
 [model_zoo.get_config](../modules/model_zoo.html#detectron2.model_zoo.get_config).
@@ -131,12 +131,12 @@ From the output it's easier to find relevant options to change, e.g.
 `dataloader.train.total_batch_size` for the batch size, or `optimizer.lr` for base learning rate.
 
 We provide a reference training script
-[tools/lazyconfig_train_net.py](../../tools/lazyconfig_train_net.py),
+[tools/lazyconfig_train_net.py](../../../tools/lazyconfig_train_net.py),
 that can train/eval our model zoo configs.
 It also shows how to support command line value overrides.
 
 To demonstrate the power and flexibility of the new system, we show that
-[a simple config file](../../configs/Misc/torchvision_imagenet_R_50.py)
+[a simple config file](../../../configs/Misc/torchvision_imagenet_R_50.py)
 can let detectron2 train an ImageNet classification model from torchvision, even though
 detectron2 contains no features about ImageNet classification.
 This can serve as a reference for using detectron2 in other deep learning tasks.
