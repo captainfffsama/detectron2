@@ -60,7 +60,7 @@ class GithubURLDomain(Domain):
 # to support markdown
 from recommonmark.parser import CommonMarkParser
 
-sys.path.insert(0, os.path.abspath("../"))
+sys.path.insert(0, os.path.abspath("../../"))
 os.environ["_DOC_BUILDING"] = "True"
 DEPLOY = os.environ.get("READTHEDOCS") == "True"
 
