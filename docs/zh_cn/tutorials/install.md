@@ -1,17 +1,18 @@
-## Installation
+## 安装
 
-### Requirements
-- Linux or macOS with Python ≥ 3.7
-- PyTorch ≥ 1.8 and [torchvision](https://github.com/pytorch/vision/) that matches the PyTorch installation.
-  Install them together at [pytorch.org](https://pytorch.org) to make sure of this
-- OpenCV is optional but needed by demo and visualization
+### 环境要求
+- 装有 Python ≥ 3.7 的 Linux 或 macOS
+- 装有 PyTorch ≥ 1.8 和对应版本的 [torchvision](https://github.com/pytorch/vision/),
+  通过在 [pytorch.org](https://pytorch.org) 一起安装它们可以确保版本一致
+- 若需要演示和可视化,还需要安装 OpenCV
 
 
-### Build Detectron2 from Source
+### 源码构建 Detectron2
 
-gcc & g++ ≥ 5.4 are required. [ninja](https://ninja-build.org/) is optional but recommended for faster build.
-After having them, run:
-```
+gcc & g++ ≥ 5.4 are required.  is optional but recommended for faster build.
+gcc & g++ ≥ 5.4 是必需的.[ninja](https://ninja-build.org/) 可选,但建议安装,可以加快构建.
+满足这些条件后,运行
+```shell
 python -m pip install 'git+https://github.com/facebookresearch/detectron2.git'
 # (add --user if you don't have permission)
 
@@ -23,12 +24,12 @@ python -m pip install -e detectron2
 CC=clang CXX=clang++ ARCHFLAGS="-arch x86_64" python -m pip install ...
 ```
 
-To __rebuild__ detectron2 that's built from a local clone, use `rm -rf build/ **/*.so` to clean the
-old build first. You often need to rebuild detectron2 after reinstalling PyTorch.
+若要从本地克隆仓库中__重新构建__ detectron2,请先执行 `rm -rf build/ **/*.so` 来清理之前的构建.
+在重新安装 PyTorch 之后, detectron2 也需要重新构建.
 
-### Install Pre-Built Detectron2 (Linux only)
+### 安装预构建的 Detectron2 (仅 Linux)
 
-Choose from this table to install [v0.6 (Oct 2021)](https://github.com/facebookresearch/detectron2/releases):
+根据此表可安装 [v0.6 (Oct 2021)](https://github.com/facebookresearch/detectron2/releases):
 
 <table class="docutils"><tbody><th width="80"> CUDA </th><th valign="bottom" align="left" width="100">torch 1.10</th><th valign="bottom" align="left" width="100">torch 1.9</th><th valign="bottom" align="left" width="100">torch 1.8</th> <tr><td align="left">11.3</td><td align="left"><details><summary> install </summary><pre><code>python -m pip install detectron2 -f \
   https://dl.fbaipublicfiles.com/detectron2/wheels/cu113/torch1.10/index.html
@@ -54,111 +55,97 @@ Choose from this table to install [v0.6 (Oct 2021)](https://github.com/facebookr
   https://dl.fbaipublicfiles.com/detectron2/wheels/cpu/torch1.8/index.html
 </code></pre> </details> </td> </tr></tbody></table>
 
-Note that:
-1. The pre-built packages have to be used with corresponding version of CUDA and the official package of PyTorch.
-   Otherwise, please build detectron2 from source.
-2. New packages are released every few months. Therefore, packages may not contain latest features in the main
-   branch and may not be compatible with the main branch of a research project that uses detectron2
-   (e.g. those in [projects](projects)).
+
+注意:
+1. 预构建的包必须与相应版本的 CUDA 和 PyTorch 的官方包一起使用.否则,请从源代码构建 detectron2.
+2. 每隔几个月就会发布一次新软件包.因此,软件包可能不包含主分支中的最新功能,并且可能与使用 detectron2 的研究项目的主分支(例如[项目中这些功能](projects))不兼容.
 
 ### Common Installation Issues
+### 常见安装问题
 
 Click each issue for its solutions:
+单击每个问题以获取其解决方案:
 
 <details>
 <summary>
-Undefined symbols that looks like "TH..","at::Tensor...","torch..."
+有类似 "TH..","at::Tensor...","torch..." 等符号未定义.
 </summary>
 <br/>
 
-This usually happens when detectron2 or torchvision is not
-compiled with the version of PyTorch you're running.
+这类问题通常是因为 detectron2 或 torchvision 与正在运行的 PyTorch 版本不匹配导致的.
 
-If the error comes from a pre-built torchvision, uninstall torchvision and pytorch and reinstall them
-following [pytorch.org](http://pytorch.org). So the versions will match.
+若是预构建的 torchvision 报错,请卸载 torchvision 和 pytorch,并根据 [pytorch.org](http://pytorch.org) 来重新安装它们,以确保两者版本匹配.
 
-If the error comes from a pre-built detectron2, check [release notes](https://github.com/facebookresearch/detectron2/releases),
-uninstall and reinstall the correct pre-built detectron2 that matches pytorch version.
+若是预构建的 detectron2 报错,请检查 [release notes](https://github.com/facebookresearch/detectron2/releases),卸载当前 detectron2 并重新安装正确的和 pytorch 版本匹配的预构建 detectron2.
 
 If the error comes from detectron2 or torchvision that you built manually from source,
 remove files you built (`build/`, `**/*.so`) and rebuild it so it can pick up the version of pytorch currently in your environment.
+若是手动构建的 detectron2 或 torchvision 报错,请删除手动构建文件(`build/`,`**/*.so`)并重新构建,以便可以获取您当前环境中存在的 pytorch 版本.
 
-If the above instructions do not resolve this problem, please provide an environment (e.g. a dockerfile) that can reproduce the issue.
+若上述方案均无法解决问题,请提供可以复现问题的环境(比如 dockerfile).
 </details>
 
 <details>
 <summary>
-Missing torch dynamic libraries, OR segmentation fault immediately when using detectron2.
+使用 detectron2 提示缺少 torch 的动态链接库或是发生 segmentation fault.
 </summary>
-This usually happens when detectron2 or torchvision is not
-compiled with the version of PyTorch you're running. See the previous common issue for the solution.
+这类问题通常时因为 detectron2 或 torchvision 和当前正在运行的 PyTorch 版本不匹配导致的.解决方法参见上一个问题.
 </details>
 
 <details>
 <summary>
-Undefined C++ symbols (e.g. "GLIBCXX..") or C++ symbols not found.
-</summary>
-<br/>
-Usually it's because the library is compiled with a newer C++ compiler but run with an old C++ runtime.
-
-This often happens with old anaconda.
-It may help to run `conda update libgcc` to upgrade its runtime.
-
-The fundamental solution is to avoid the mismatch, either by compiling using older version of C++
-compiler, or run the code with proper C++ runtime.
-To run the code with a specific C++ runtime, you can use environment variable `LD_PRELOAD=/path/to/libstdc++.so`.
-
-</details>
-
-<details>
-<summary>
-"nvcc not found" or "Not compiled with GPU support" or "Detectron2 CUDA Compiler: not available".
+未定义或者未找到 C++ 符号(比如 "GLIBCXX..").
 </summary>
 <br/>
-CUDA is not found when building detectron2.
-You should make sure
+这通常是因为库使用了较新的 C++ 编译器编译,但运行环境下的 C++ 运行库是旧的.
 
-```
+这类问题在较旧的 anaconda 上易出现,运行 `conda update libgcc` 来升级 C++ 运行库可能会有所帮助.
+
+解决方案的根本在于要避免 C++ 编译器不匹配问题,要么使用较旧的 C++ 编译器,要么使用合适的 C++ 运行库.
+若要指定 C++ 运行库,可以使用环境变量 `LD_PRELOAD=/path/to/libstdc++.so`.
+</details>
+
+<details>
+<summary>
+"nvcc not found" 或 "Not compiled with GPU support" 或 "Detectron2 CUDA Compiler: not available".
+</summary>
+<br/>
+构建 detectron2 时未找到 CUDA.你应该确保在你构建 detectron2 时运行
+```shell
 python -c 'import torch; from torch.utils.cpp_extension import CUDA_HOME; print(torch.cuda.is_available(), CUDA_HOME)'
 ```
+打印结果为 `(True, a directory with cuda)` .
 
-print `(True, a directory with cuda)` at the time you build detectron2.
-
-Most models can run inference (but not training) without GPU support. To use CPUs, set `MODEL.DEVICE='cpu'` in the config.
+大部分模型都可以在无 GPU 支持的情况下推理(但不能训练).若要使用 CPU,请在配置中设置 `MODEL.DEVICE='cpu'`.
 </details>
 
 <details>
 <summary>
-"invalid device function" or "no kernel image is available for execution".
+"invalid device function" 或 "no kernel image is available for execution".
 </summary>
 <br/>
-Two possibilities:
+导致该问题的两个可能原因:
 
-* You build detectron2 with one version of CUDA but run it with a different version.
+* 构建 detectron2 时的 CUDA 和运行时的 CUDA 版本不一致.
 
-  To check whether it is the case,
-  use `python -m detectron2.utils.collect_env` to find out inconsistent CUDA versions.
-  In the output of this command, you should expect "Detectron2 CUDA Compiler", "CUDA_HOME", "PyTorch built with - CUDA"
-  to contain cuda libraries of the same version.
+  要确认是否时这类情况,请使用 `python -m detectron2.utils.collect_env` 来找出不一致的 CUDA 版本.理想情况下, 
+  这条命令输出中的 "Detectron2 CUDA Compiler", "CUDA_HOME", "PyTorch built with - CUDA" 中包含的 cuda 库版本应该一致.
 
-  When they are inconsistent,
-  you need to either install a different build of PyTorch (or build by yourself)
-  to match your local CUDA installation, or install a different version of CUDA to match PyTorch.
+  当它们不一致时,您需要安装不同的 PyTorch 版本(或自己构建) 以匹配本地 CUDA 安装，或安装其他版本的 CUDA 以匹配 PyTorch.
 
-* PyTorch/torchvision/Detectron2 is not built for the correct GPU SM architecture (aka. compute capability).
+* PyTorch/torchvision/Detectron2 不是以正确的 GPU SM 架构(又名计算能力)构建的。
 
-  The architecture included by PyTorch/detectron2/torchvision is available in the "architecture flags" in
-  `python -m detectron2.utils.collect_env`. It must include
-  the architecture of your GPU, which can be found at [developer.nvidia.com/cuda-gpus](https://developer.nvidia.com/cuda-gpus).
+  指令`python -m detectron2.utils.collect_env` 中的 "architecture flags" 显示有 PyTorch/detectron2/torchvision 的架构.
+  这些架构中必须包含有您的 GPU 架构, GPU 架构可参见 [developer.nvidia.com/cuda-gpus](https://developer.nvidia.com/cuda-gpus).
 
-  If you're using pre-built PyTorch/detectron2/torchvision, they have included support for most popular GPUs already.
-  If not supported, you need to build them from source.
+  若您使用的是预构建的 PyTorch/detectron2/torchvision,它们通常已经支持了最流行的一些 GPU.
+  若不支持,您需要自行从源码构建它们.
 
-  When building detectron2/torchvision from source, they detect the GPU device and build for only the device.
-  This means the compiled code may not work on a different GPU device.
-  To recompile them for the correct architecture, remove all installed/compiled files,
-  and rebuild them with the `TORCH_CUDA_ARCH_LIST` environment variable set properly.
-  For example, `export TORCH_CUDA_ARCH_LIST="6.0;7.0"` makes it compile for both P100s and V100s.
+  从源代码构建 detectron2/torchvision 时,它们会检测 GPU 设备并仅针对设备进行构建.
+  这意味着编译后的代码可能无法在其他 GPU 设备上运行.
+  要以正确的体系结构重新编译它们，请删除所有已安装/编译的文件,
+  并使用正确设置 `TORCH_CUDA_ARCH_LIST` 环境变量并重新生成它们.
+  例如, `export TORCH_CUDA_ARCH_LIST="6.0;7.0"` 使其同时针对 P100 和 V100 进行编译.
 </details>
 
 <details>

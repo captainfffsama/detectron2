@@ -21,56 +21,49 @@ python demo.py --config-file ../configs/COCO-InstanceSegmentation/mask_rcnn_R_50
 由于配置是针对训练设置的,因此我们需要通过设置 `MODEL.WEIGHTS` 来从模型库中指定一个模型来进行评估.
 此命令将进行推理并在 OpenCV 窗口中显示可视化效果.
 
-For details of the command line arguments, see `demo.py -h` or look at its source code
-to understand its behavior. Some common arguments are:
-* To run __on your webcam__, replace `--input files` with `--webcam`.
-* To run __on a video__, replace `--input files` with `--video-input video.mp4`.
-* To run __on cpu__, add `MODEL.DEVICE cpu` after `--opts`.
-* To save outputs to a directory (for images) or a file (for webcam or video), use `--output`.
+想要了解命令行参数的细节，可以参阅 `demo.py -h` 或是源码. 一些常见的参数如下:
+* 想在__网络摄像头__上运行,可将 `--input files` 替换为 `--webcam`.
+* 想在__视频__上运行,可将 `--input files` 替换为 `--video-input video.mp4`.
+* 想在__CPU__上运行,可在 `--opts` 参数之后添加`MODEL.DEVICE cpu`.
+* 想将输出保存到目录(用于图像)或是文件(用于网络摄像头或者视频),可使用 `--output`.
 
 
-### Training & Evaluation in Command Line
+### 使用命令行命令进行训练&评估
 
-We provide two scripts in "tools/plain_train_net.py" and "tools/train_net.py",
-that are made to train all the configs provided in detectron2. You may want to
-use it as a reference to write your own training script.
+我们提供了"tools/plain_train_net.py" 和 "tools/train_net.py" 两个脚本,它们适用于 detectron2 中所有配置的训练.
+你也可以以此作为参考来编写自己的训练脚本.
 
-Compared to "train_net.py", "plain_train_net.py" supports fewer default
-features. It also includes fewer abstraction, therefore is easier to add custom
-logic.
+相比于 "train_net.py", "plain_train_net.py" 支持的默认功能更少.但它包含的抽象也更精简,更加容易添加自定义逻辑.
 
-To train a model with "train_net.py", first
-setup the corresponding datasets following
-[datasets/README.md](./datasets/README.md),
-then run:
-```
+要使用 "train_net.py" 训练模型，请先根据 [datasets/README.md](./datasets/README.md) 设置相应的数据集，然后运行：
+```shell
 cd tools/
 ./train_net.py --num-gpus 8 \
   --config-file ../configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml
 ```
 
-The configs are made for 8-GPU training.
-To train on 1 GPU, you may need to [change some parameters](https://arxiv.org/abs/1706.02677), e.g.:
-```
+以上配置是使用8个 GPU 来训练的.若想用单卡训练,你需要[修改一些参数](https://arxiv.org/abs/1706.02677),例如:
+```shell
 ./train_net.py \
   --config-file ../configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml \
   --num-gpus 1 SOLVER.IMS_PER_BATCH 2 SOLVER.BASE_LR 0.0025
 ```
 
-To evaluate a model's performance, use
-```
+若要在评估模型的性能,可执行:
+```shell
 ./train_net.py \
   --config-file ../configs/COCO-InstanceSegmentation/mask_rcnn_R_50_FPN_1x.yaml \
   --eval-only MODEL.WEIGHTS /path/to/checkpoint_file
 ```
-For more options, see `./train_net.py -h`.
+有关更多选项,可以参阅 `./train_net.py -h`.
 
-### Use Detectron2 APIs in Your Code
+### 在代码中使用 Detectron2 API
 
-See our [Colab Notebook](https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5)
-to learn how to use detectron2 APIs to:
-1. run inference with an existing model
-2. train a builtin model on a custom dataset
+参阅 [Colab Notebook](https://colab.research.google.com/drive/16jcaJoc6bCFAQ96jDe2HwtXj7BMD_-m5)
+可以学习到如何使用 detectron2 API 来完成:
+1. 在已有模型上完成推理
+2. 在自定义数据集上训练内置模型
 
-See [detectron2/projects](https://github.com/facebookresearch/detectron2/tree/main/projects)
-for more ways to build your project on detectron2.
+参阅 [detectron2/projects](https://github.com/facebookresearch/detectron2/tree/main/projects),
+了解使用 detctron2 来构建项目的更多方法.
+
