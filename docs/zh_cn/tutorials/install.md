@@ -60,15 +60,15 @@ CC=clang CXX=clang++ ARCHFLAGS="-arch x86_64" python -m pip install ...
 1. 预构建的包必须与相应版本的 CUDA 和 PyTorch 的官方包一起使用.否则,请从源代码构建 detectron2.
 2. 每隔几个月就会发布一次新软件包.因此,软件包可能不包含主分支中的最新功能,并且可能与使用 detectron2 的研究项目的主分支(例如[项目中这些功能](projects))不兼容.
 
-### Common Installation Issues
 ### 常见安装问题
 
-Click each issue for its solutions:
 单击每个问题以获取其解决方案:
 
 <details>
 <summary>
+
 有类似 "TH..","at::Tensor...","torch..." 等符号未定义.
+
 </summary>
 <br/>
 
@@ -78,52 +78,69 @@ Click each issue for its solutions:
 
 若是预构建的 detectron2 报错,请检查 [release notes](https://github.com/facebookresearch/detectron2/releases),卸载当前 detectron2 并重新安装正确的和 pytorch 版本匹配的预构建 detectron2.
 
-If the error comes from detectron2 or torchvision that you built manually from source,
-remove files you built (`build/`, `**/*.so`) and rebuild it so it can pick up the version of pytorch currently in your environment.
 若是手动构建的 detectron2 或 torchvision 报错,请删除手动构建文件(`build/`,`**/*.so`)并重新构建,以便可以获取您当前环境中存在的 pytorch 版本.
 
 若上述方案均无法解决问题,请提供可以复现问题的环境(比如 dockerfile).
+
 </details>
 
 <details>
 <summary>
+
 使用 detectron2 提示缺少 torch 的动态链接库或是发生 segmentation fault.
-</summary>
-这类问题通常时因为 detectron2 或 torchvision 和当前正在运行的 PyTorch 版本不匹配导致的.解决方法参见上一个问题.
-</details>
 
-<details>
-<summary>
-未定义或者未找到 C++ 符号(比如 "GLIBCXX..").
 </summary>
 <br/>
+
+这类问题通常时因为 detectron2 或 torchvision 和当前正在运行的 PyTorch 版本不匹配导致的.解决方法参见上一个问题.
+
+</details>
+
+<details>
+<summary>
+
+未定义或者未找到 C++ 符号(比如 "GLIBCXX..").
+
+</summary>
+<br/>
+
 这通常是因为库使用了较新的 C++ 编译器编译,但运行环境下的 C++ 运行库是旧的.
 
 这类问题在较旧的 anaconda 上易出现,运行 `conda update libgcc` 来升级 C++ 运行库可能会有所帮助.
 
 解决方案的根本在于要避免 C++ 编译器不匹配问题,要么使用较旧的 C++ 编译器,要么使用合适的 C++ 运行库.
 若要指定 C++ 运行库,可以使用环境变量 `LD_PRELOAD=/path/to/libstdc++.so`.
+
 </details>
 
 <details>
 <summary>
+
 "nvcc not found" 或 "Not compiled with GPU support" 或 "Detectron2 CUDA Compiler: not available".
+
 </summary>
 <br/>
-构建 detectron2 时未找到 CUDA.你应该确保在你构建 detectron2 时运行
+
+构建 detectron2 时未找到 CUDA.你应该确保在你构建 detectron2 时运行  
+
 ```shell
 python -c 'import torch; from torch.utils.cpp_extension import CUDA_HOME; print(torch.cuda.is_available(), CUDA_HOME)'
 ```
+
 打印结果为 `(True, a directory with cuda)` .
 
 大部分模型都可以在无 GPU 支持的情况下推理(但不能训练).若要使用 CPU,请在配置中设置 `MODEL.DEVICE='cpu'`.
+
 </details>
 
 <details>
 <summary>
+
 "invalid device function" 或 "no kernel image is available for execution".
+
 </summary>
 <br/>
+
 导致该问题的两个可能原因:
 
 * 构建 detectron2 时的 CUDA 和运行时的 CUDA 版本不一致.
@@ -146,6 +163,7 @@ python -c 'import torch; from torch.utils.cpp_extension import CUDA_HOME; print(
   要以正确的体系结构重新编译它们，请删除所有已安装/编译的文件,
   并使用正确设置 `TORCH_CUDA_ARCH_LIST` 环境变量并重新生成它们.
   例如, `export TORCH_CUDA_ARCH_LIST="6.0;7.0"` 使其同时针对 P100 和 V100 进行编译.
+
 </details>
 
 <details>

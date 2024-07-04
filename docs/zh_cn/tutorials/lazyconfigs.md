@@ -95,7 +95,7 @@ A Full Mask R-CNN described in recursive instantiation (click to expand)
  </summary>
 
 ```eval_rst
-.. literalinclude:: ../../configs/common/models/mask_rcnn_fpn.py
+.. literalinclude:: ../../../configs/common/models/mask_rcnn_fpn.py
   :language: python
   :linenos:
 ```

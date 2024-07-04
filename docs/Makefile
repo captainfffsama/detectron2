@@ -16,5 +16,5 @@ help:
 # Catch-all target: route all unknown targets to Sphinx using the new
 # "make mode" option.  $(O) is meant as a shortcut for $(SPHINXOPTS).
 %: Makefile
-	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)/en" "$(BUILDDIR)/en" $(SPHINXOPTS) $(O)
-	# @$(SPHINXBUILD) -M $@ "$(SOURCEDIR)/zh_cn" "$(BUILDDIR)/zh_cn" $(SPHINXOPTS) $(O)
+	# @$(SPHINXBUILD) -M $@ "$(SOURCEDIR)/en" "$(BUILDDIR)/en" $(SPHINXOPTS) $(O)
+	@$(SPHINXBUILD) -M $@ "$(SOURCEDIR)/zh_cn" "$(BUILDDIR)/zh_cn" $(SPHINXOPTS) $(O)

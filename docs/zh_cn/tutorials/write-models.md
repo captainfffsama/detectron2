@@ -1,19 +1,16 @@
-# Write Models
+# 编写模型
 
-If you are trying to do something completely new, you may wish to implement
-a model entirely from scratch. However, in many situations you may
-be interested in modifying or extending some components of an existing model.
-Therefore, we also provide mechanisms that let users override the
-behavior of certain internal components of standard models.
+如果您正在尝试做一些全新的事情,比如完全从头实现一个模型.此时,
+您可能对修改或者扩展现有模型的一些组件感兴趣.为此,
+我们还提供了允许用户重写标准模型中某些内部组件的机制.
 
 
-## Register New Components
+## 注册新组件
 
-For common concepts that users often want to customize, such as "backbone feature extractor", "box head",
-we provide a registration mechanism for users to inject custom implementation that
-will be immediately available to use in config files.
+对于诸如"特征提取主干网络","任务头"等用户常想自定义的概念,我们提供了注册机制,
+它可以注入这些自定义实现,并支持通过配置文件进行配置.
 
-For example, to add a new backbone, import this code in your code:
+例如添加一个新的主干网络,可以将以下代码导入到您的代码中:
 ```python
 from detectron2.modeling import BACKBONE_REGISTRY, Backbone, ShapeSpec
 
@@ -31,11 +28,9 @@ class ToyBackbone(Backbone):
     return {"conv1": ShapeSpec(channels=64, stride=16)}
 ```
 
-In this code, we implement a new backbone following the interface of the
-[Backbone](../modules/modeling.html#detectron2.modeling.Backbone) class,
-and register it into the [BACKBONE_REGISTRY](../modules/modeling.html#detectron2.modeling.BACKBONE_REGISTRY)
-which requires subclasses of `Backbone`.
-After importing this code, detectron2 can link the name of the class to its implementation. Therefore you can write the following code:
+在这段代码中,我们按照 [Backbone](../modules/modeling.html#detectron2.modeling.Backbone) 类的接口实现一个新的主干网络,
+作为 `Backbone` 的子类,将其注册到 [BACKBONE_REGISTRY](../modules/modeling.html#detectron2.modeling.BACKBONE_REGISTRY)中.
+导入此代码后，detectron2 可以将类的名称链接到其实现。因此，您可以编写以下代码：
 
 ```python
 cfg = ...   # read a config
@@ -43,36 +38,30 @@ cfg.MODEL.BACKBONE.NAME = 'ToyBackbone'   # or set it in the config file
 model = build_model(cfg)  # it will find `ToyBackbone` defined above
 ```
 
-As another example, to add new abilities to the ROI heads in the Generalized R-CNN meta-architecture,
-you can implement a new
-[ROIHeads](../modules/modeling.html#detectron2.modeling.ROIHeads) subclass and put it in the `ROI_HEADS_REGISTRY`.
-[DensePose](../../projects/DensePose)
-and [MeshRCNN](https://github.com/facebookresearch/meshrcnn)
-are two examples that implement new ROIHeads to perform new tasks.
-And [projects/](../../projects/)
-contains more examples that implement different architectures.
+再举一个例子,要为 Generalized R-CNN 元架构中的 ROI 头添加新的能力,
+您可以实现一个新的 [ROIHeads](../modules/modeling.html#detectron2.modeling.ROIHeads) 的子类并将其注册到 `ROI_HEADS_REGISTRY` 中.
+[DensePose](../../../projects/DensePose)
+和 [MeshRCNN](https://github.com/facebookresearch/meshrcnn) 就是这样的两个例子,它们实现了新的 ROI 头来执行新的任务.
+[projects/](../../../projects/) 包含了更多这样实现不同架构模型的例子.
 
-A complete list of registries can be found in [API documentation](../modules/modeling.html#model-registries).
-You can register components in these registries to customize different parts of a model, or the
-entire model.
+在 [API documentation](../modules/modeling.html#model-registries) 中可以找到完整的注册表列表.
+您可以在这些注册表中注册组件，以自定义模型的不同部分或整个模型.
 
-## Construct Models with Explicit Arguments
+## 使用显式参数构建模型
 
-Registry is a bridge to connect names in config files to the actual code.
-They are meant to cover a few main components that users frequently need to replace.
-However, the capability of a text-based config file is sometimes limited and
-some deeper customization may be available only through writing code.
+Registry 是将配置文件中的名称连接到实际代码的桥梁.它们旨在涵盖用户经常需要更换的几个主要组件.
+但是,基于文本的配置文件的功能有时是有限的,一些更深层次的定制可能只有通过编写代码才能获得.
 
-Most model components in detectron2 have a clear `__init__` interface that documents
-what input arguments it needs. Calling them with custom arguments will give you a custom variant
-of the model.
+detectron2 中的大多数模型组件都有一个清晰 `__init__` 的接口,用于记录它需要的输入参数.
+使用自定义参数调用它们将为您提供模型的自定义变体。
 
-As an example, to use __custom loss function__ in the box head of a Faster R-CNN, we can do the following:
+例如,在 Faster R-CNN 的回归框头上使用 __自定义损失函数__,我们可以执行以下操作:
 
-1. Losses are currently computed in [FastRCNNOutputLayers](../modules/modeling.html#detectron2.modeling.FastRCNNOutputLayers).
-   We need to implement a variant or a subclass of it, with custom loss functions, named  `MyRCNNOutput`.
-2. Call `StandardROIHeads` with `box_predictor=MyRCNNOutput()` argument instead of the builtin `FastRCNNOutputLayers`.
-   If all other arguments should stay unchanged, this can be easily achieved by using the [configurable `__init__`](../modules/config.html#detectron2.config.configurable) mechanism:
+1. 损失目前在 [FastRCNNOutputLayers](../modules/modeling.html#detectron2.modeling.FastRCNNOutputLayers) 中计算.
+我们需要实现一个包含自定义损失函数的变体或者子类,这里不妨叫 `MyRCNNOutput`.
+
+2. 使用 `box_predictor=MyRCNNOutput()` 作为参数而非 `FastRCNNOutputLayers` 的默认设置来调用 `StandardROIHeads`.
+若其他参数保持不变,则通过[可配置的`__init__`](../modules/config.html#detectron2.config.configurable) 机制来轻松实现:
 
    ```python
    roi_heads = StandardROIHeads(
@@ -80,7 +69,9 @@ As an example, to use __custom loss function__ in the box head of a Faster R-CNN
      box_predictor=MyRCNNOutput(...)
    )
    ```
-3. (optional) If we want to enable this new model from a config file, registration is needed:
+
+3. (可选) 如果我们想从配置文件中启用这个新模型,则需要注册:
+
    ```python
    @ROI_HEADS_REGISTRY.register()
    class MyStandardROIHeads(StandardROIHeads):
