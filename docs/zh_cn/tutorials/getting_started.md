@@ -22,9 +22,9 @@ python demo.py --config-file ../configs/COCO-InstanceSegmentation/mask_rcnn_R_50
 此命令将进行推理并在 OpenCV 窗口中显示可视化效果.
 
 想要了解命令行参数的细节，可以参阅 `demo.py -h` 或是源码. 一些常见的参数如下:
-* 想在__网络摄像头__上运行,可将 `--input files` 替换为 `--webcam`.
-* 想在__视频__上运行,可将 `--input files` 替换为 `--video-input video.mp4`.
-* 想在__CPU__上运行,可在 `--opts` 参数之后添加`MODEL.DEVICE cpu`.
+* 想在 __网络摄像头__ 上运行,可将 `--input files` 替换为 `--webcam`.
+* 想在 __视频__ 上运行,可将 `--input files` 替换为 `--video-input video.mp4`.
+* 想在 __CPU__ 上运行,可在 `--opts` 参数之后添加`MODEL.DEVICE cpu`.
 * 想将输出保存到目录(用于图像)或是文件(用于网络摄像头或者视频),可使用 `--output`.
 
 
