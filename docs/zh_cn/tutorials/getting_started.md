@@ -1,4 +1,4 @@
-## Detectron2快速上手
+## Detectron2 快速上手
 
 本文将简要介绍 detectron2 内置命令行工具的使用方法.
 

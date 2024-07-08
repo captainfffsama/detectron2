@@ -1,4 +1,4 @@
-# 使用自定义数据集
+## 使用自定义数据集
 
 本文将解释数据集 API
 ([DatasetCatalog](../modules/data.html#detectron2.data.DatasetCatalog), [MetadataCatalog](../modules/data.html#detectron2.data.MetadataCatalog))
@@ -55,7 +55,7 @@ data: List[Dict] = DatasetCatalog.get("my_dataset")
 
   * - 任务
     - 字段
-  * - 一般任务 
+  * - 一般任务
     - file_name, height, width, image_id
 
   * - 实例检测/分割
@@ -71,9 +71,9 @@ data: List[Dict] = DatasetCatalog.get("my_dataset")
 + `file_name`: 图像文件的完整路径.
 + `height`, `width` (int): 图像的宽高.
 + `image_id` (str or int): 标识这幅图像的唯一ID.很多评估器需要识别这幅图像,但是数据集可能被用于不同用途.
-+ `annotations` (list[dict]): __实例检测/分割__ 或 __关键点检测__ 任务需要.一个字典对应于一个实例的标注,它可能会包含以下键: 
++ `annotations` (list[dict]): __实例检测/分割__ 或 __关键点检测__ 任务需要.一个字典对应于一个实例的标注,它可能会包含以下键:
   + `bbox` (list[float], required): 代表实例边界框的列表,由4个数字组成.
-  + `bbox_mode` (int, required): 边界框格式.它必须是 
+  + `bbox_mode` (int, required): 边界框格式.它必须是
     [structures.BoxMode](../modules/structures.html#detectron2.structures.BoxMode) 的成员变量.
     当前支持: `BoxMode.XYXY_ABS`, `BoxMode.XYWH_ABS`.
   + `category_id` (int, required): 代表类别标签的整数,其数值范围是 [0,类别数量-1].
@@ -110,7 +110,7 @@ data: List[Dict] = DatasetCatalog.get("my_dataset")
 + `segments_info` (list[dict]): 定义了全景分割标注中每个 id 的含义.
   每个字典包含以下键:
   + `id` (int): 标注文件中的像素值.
-  + `category_id` (int): 范围在 [0, 类别数-1] 代表类别标签的整数. 
+  + `category_id` (int): 范围在 [0, 类别数-1] 代表类别标签的整数.
   + `iscrowd`: 0 (默认) 或 1. 代表该实例是否是 COCO 中的 "crowd region".
 
 ```eval_rst
@@ -191,7 +191,7 @@ MetadataCatalog.get("my_dataset").thing_classes = ["person", "dog"]
 
 以下是一些特定数据集(例如 COCO)在评估时需要指定的额外元数据.
 
-* `thing_dataset_id_to_contiguous_id` (dict[int->int]): 由所有采用 COCO 格式的实例检测/分割任务使用. 
+* `thing_dataset_id_to_contiguous_id` (dict[int->int]): 由所有采用 COCO 格式的实例检测/分割任务使用.
   将数据集中实例类别的 id 映射成范围在 [0,#class) 的连续 id.
   通常由 `load_coco_json` 函数自动设置.
 
@@ -219,7 +219,7 @@ MetadataCatalog.get("my_dataset").thing_classes = ["person", "dog"]
 ```eval_rst
 .. note::
 
-    译者注:    
+    译者注:
     在分割任务中, 事物(thing)常被代指可以单独识别区分的离散对象,比如人,车,动物等.这些对象在图像中可以实例化,可以被单独框选,每个实例由自己的边界框或者分割掩码.
     填充(stuff)常用来指代不进行实例区分,没有明显边界的连续区域,比如背景中的道路,天空,地面等等.
 
@@ -237,7 +237,6 @@ register_coco_instances("my_dataset", {}, "json_annotation.json", "path/to/image
 若您的数据集使用的是 COCO 格式,且需要进一步处理,或每个实例由一些额外的自定义标注,
 [load_coco_json](../modules/data.html#detectron2.data.datasets.load_coco_json) 函数可能会很有用.
 
-### Update the Config for New Datasets
 ### 更新新数据集配置
 
 一旦您注册了数据集,您可以在 `cfg.DATASETS.{TRAIN,TEST}` 配置项中使用数据集的名字(比如,上面示例中的 "my_dataset").
