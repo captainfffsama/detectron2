@@ -1,44 +1,40 @@
 
-# Dataloader
+# 数据加载器
 
-Dataloader is the component that provides data to models.
-A dataloader usually (but not necessarily) takes raw information from [datasets](./datasets.md),
-and process them into a format needed by the model.
+数据加载器是为模型提供数据的组件.
+数据加载器通常(但不一定)从[数据集](./datasets.md)中获取原始信息,
+并将其处理为模型所需的格式.
 
-## How the Existing Dataloader Works
+## 现有数据加载器的工作原理
 
-Detectron2 contains a builtin data loading pipeline.
-It's good to understand how it works, in case you need to write a custom one.
+Detectron2 包含了一个内置的数据加载流程.
+了解其工作原理将有助于您编写一个自定义的数据加载流程.
 
-Detectron2 provides two functions
-[build_detection_{train,test}_loader](../modules/data.html#detectron2.data.build_detection_train_loader)
-that create a default data loader from a given config.
-Here is how `build_detection_{train,test}_loader` work:
+Detectron2 提供了 [build_detection_{train,test}_loader](../modules/data.html#detectron2.data.build_detection_train_loader) 两个函数,
+用于从给定配置中创建默认数据加载器.
+以下是 `build_detection_{train,test}_loader` 的工作原理:
 
-1. It takes the name of a registered dataset (e.g., "coco_2017_train") and loads a `list[dict]` representing the dataset items
-   in a lightweight format. These dataset items are not yet ready to be used by the model (e.g., images are
-   not loaded into memory, random augmentations have not been applied, etc.).
-   Details about the dataset format and dataset registration can be found in
-   [datasets](./datasets.md).
-2. Each dict in this list is mapped by a function ("mapper"):
-   * Users can customize this mapping function by specifying the "mapper" argument in
-        `build_detection_{train,test}_loader`. The default mapper is [DatasetMapper](../modules/data.html#detectron2.data.DatasetMapper).
-   * The output format of the mapper can be arbitrary, as long as it is accepted by the consumer of this data loader (usually the model).
-     The outputs of the default mapper, after batching, follow the default model input format documented in
-     [Use Models](./models.html#model-input-format).
-   * The role of the mapper is to transform the lightweight representation of a dataset item into a format
-     that is ready for the model to consume (including, e.g., read images, perform random data augmentation and convert to torch Tensors).
-     If you would like to perform custom transformations to data, you often want a custom mapper.
-3. The outputs of the mapper are batched (simply into a list).
-4. This batched data is the output of the data loader. Typically, it's also the input of
-   `model.forward()`.
+1. 它会读取注册数据集的名称(如,"coco_2017_train"),并使用 `list[dict]` 来表示加载到的,轻量格式的数据集项.
+   但此时这些轻量格式的数据集项并不能直接供模型使用(比如,图像文件没有被加载到内存中,没有对样本应用随机增强等).
+   有关数据集格式和注册方法,可参见文档
+   [数据集](./datasets.md).
+2. 该 list 中每个 dict 都是由映射器 ("mapper") 映射而来的:
+   * 通过指定 `build_detection_{train,test}_loader` 中 "mapper" 参数,可以传入自定义的映射器.默认映射器是
+        [DatasetMapper](../modules/data.html#detectron2.data.DatasetMapper).
+   * 映射器的输出可以是任意格式,只要该格式可以被下游数据加载器的消费者(通常是模型)接受即可.
+     默认映射器的输出,在经过批处理后,将遵循默认模型的输入格式,默认模型的输入格式参见文档
+     [使用模型](./models.html#model-input-format).
+   * 映射器的作用是将数据集项的轻量格式转换成供模型消费的格式(包括读取图像,执行随机数据增强,转换为 torch 张量等).
+     若您需要对数据进行自定义转换,通常需要自定义一个映射器.
+3. 映射器的输出将被批处理(简单地放入一个列表).
+4. 此批处理的数据是数据加载器的输出.通常,它也是
+   `model.forward()` 的输入.
 
 
-## Write a Custom Dataloader
+## 编写自定义数据加载器
 
-Using a different "mapper" with `build_detection_{train,test}_loader(mapper=)` works for most use cases
-of custom data loading.
-For example, if you want to resize all images to a fixed size for training, use:
+`build_detection_{train,test}_loader(mapper=)` 配合不同的 "映射器" 可以适用于大多数自定义加载的情况.
+例如,若想将所有图像调整为固定尺寸来训练,可以使用如下操作:
 
 ```python
 import detectron2.data.transforms as T
@@ -49,8 +45,9 @@ dataloader = build_detection_train_loader(cfg,
    ]))
 # use this dataloader instead of the default
 ```
-If the arguments of the default [DatasetMapper](../modules/data.html#detectron2.data.DatasetMapper)
-does not provide what you need, you may write a custom mapper function and use it instead, e.g.:
+
+若默认的映射器 [DatasetMapper](../modules/data.html#detectron2.data.DatasetMapper) 的参数不能满足需求,
+您可以编写并使用一个自定义映射器,例如:
 
 ```python
 from detectron2.data import detection_utils as utils
@@ -75,21 +72,17 @@ def mapper(dataset_dict):
 dataloader = build_detection_train_loader(cfg, mapper=mapper)
 ```
 
-If you want to change not only the mapper (e.g., in order to implement different sampling or batching logic),
-`build_detection_train_loader` won't work and you will need to write a different data loader.
-The data loader is simply a
-python iterator that produces [the format](./models.md) that the model accepts.
-You can implement it using any tools you like.
+若您想要更改的不仅仅是映射器(比如,还想实现不同的采样或者批处理逻辑),
+`build_detection_train_loader` 将不起作用,您还需要编写一个不同的数据加载器.
+数据加载器只是一个简单的 python 迭代器,用来产生模型可以接受的[格式](./models.md).
+您可以使用任何您喜欢的工具来实现它.
 
-No matter what to implement, it's recommended to
-check out [API documentation of detectron2.data](../modules/data) to learn more about the APIs of
-these functions.
+无论如何实现,都推荐参看 [detectron2.data 的 API 文档](../modules/data) 来了解有关这些函数 API 的信息.
 
-## Use a Custom Dataloader
+## 使用自定义数据加载器
 
-If you use [DefaultTrainer](../modules/engine.html#detectron2.engine.defaults.DefaultTrainer),
-you can overwrite its `build_{train,test}_loader` method to use your own dataloader.
-See the [deeplab dataloader](../../projects/DeepLab/train_net.py)
-for an example.
+若您使用 [DefaultTrainer](../modules/engine.html#detectron2.engine.defaults.DefaultTrainer),
+您可以通过覆盖其 `build_{train,test}_loader` 方法来使用您自己的数据加载器.
+相关示例，可以参见 [deeplab dataloader](../../../projects/DeepLab/train_net.py).
 
-If you write your own training loop, you can plug in your data loader easily.
+若您自己编写了训练循环,则可以轻松插入数据加载器.
