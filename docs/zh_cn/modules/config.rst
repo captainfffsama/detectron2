@@ -12,7 +12,7 @@ Related tutorials: :doc:`../tutorials/configs`, :doc:`../tutorials/extend`.
 Yaml Config References
 -----------------
 
-.. literalinclude:: ../../detectron2/config/defaults.py
+.. literalinclude:: ../../../detectron2/config/defaults.py
   :language: python
   :linenos:
   :lines: 7-
