@@ -39,7 +39,7 @@ __训练__: 在训练模式下，所有模型都需要在 `EventStorage` 的上�
 ```python
 from detectron2.utils.events import EventStorage
 with EventStorage() as storage:
-  losses = model(inputs)
+    losses = model(inputs)
 ```
 
 __推理__：若您只是想使用现有模型进行简单的推理，
@@ -51,7 +51,7 @@ __推理__：若您只是想使用现有模型进行简单的推理，
 ```python
 model.eval()
 with torch.no_grad():
-  outputs = model(inputs)
+    outputs = model(inputs)
 ```
 
 ### 模型输入格式
@@ -74,7 +74,7 @@ with torch.no_grad():
   + “gt_boxes”：[Boxes](../modules/structures.html#detectron2.structures.Boxes) 类型的对象，包含了 N 个包围框，与实例一一对应。
   + “gt_classes”： long 类型的 `Tensor`，是包含了 N 个标签的向量，值范围是 [0， 类别数目)。
   + “gt_masks”： [PolygonMasks](../modules/structures.html#detectron2.structures.PolygonMasks)
-    或 [BitMasks](../modules/structures.html#detectron2.structures.BitMasks) 对象，包含了 N 个掩码，与实例一一对应。 
+    或 [BitMasks](../modules/structures.html#detectron2.structures.BitMasks) 对象，包含了 N 个掩码，与实例一一对应。
   + “gt_keypoints”：[Keypoints](../modules/structures.html#detectron2.structures.Keypoints)
     对象，包含了 N 个关键点集合，与实例一一对应。
 * “sem_seg”： 形状为（H，W）的 `Tensor[int]`。它是语义分割的标注答案掩码。其中的值表示从0开始的类别标签。
@@ -122,8 +122,6 @@ with torch.no_grad():
     * “isthing”： 分割结果是事物（thing） 还是填充（stuff）
     * “category_id”： 该分割结果的类别 id
 
-    If a pixel's id does not exist in `segments_info`, it is considered to be void label
-    defined in [Panoptic Segmentation](https://arxiv.org/abs/1801.00868).
     若一个像素的 id 并不存在与 `segments_info` 中，则其表示[全景分割](https://arxiv.org/abs/1801.00868)
     中定义的空标签。
 

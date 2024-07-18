@@ -114,7 +114,7 @@ data: List[Dict] = DatasetCatalog.get("my_dataset")
   + `iscrowd`： 0 （默认） 或 1。 代表该实例是否是 COCO 中的 "crowd region"。
 
 ```eval_rst
-.. note：：
+.. note::
 
    PanopticFPN 模型不使用此处定义的全景分割格式，
    而是使用实例分割和语义分割数据格式的组合。
@@ -135,7 +135,7 @@ Fast R-CNN（带有预计算的待选区） 如今已很少被使用。
 #### 为新任务自定义数据集字典
 
 数据集函数中返回的 `list[dict]` 中的字典可以包含 __任意自定义数据__ 。
-这对于一些需要额外信息，而这些信息标准数据集字典又未涵盖的新任务非常游泳。
+这对于一些需要额外信息，而这些信息标准数据集字典又未涵盖的新任务非常有用。
 在这种情况下，您需要确保下游代码可以正确处理您的数据。
 通常这需要为数据加载器编写新的 `mapper` （请参见[使用自定义数据加载器](./data_loading.md)）。
 
@@ -206,7 +206,7 @@ MetadataCatalog.get("my_dataset").thing_classes = ["person", "dog"]
    您只需直接在您的训练脚本中直接为您的数据集提供 [DatasetEvaluator](../modules/evaluation.html#detectron2.evaluation.DatasetEvaluator)
 
 ```eval_rst
-.. note：：
+.. note::
 
    在识别中，有时我们会使用"事物（ thing ）"来指代实例级任务，
    使用"填充（ stuff ）"来指代语义分割级任务。
@@ -217,7 +217,7 @@ MetadataCatalog.get("my_dataset").thing_classes = ["person", "dog"]
 ```
 
 ```eval_rst
-.. note：：
+.. note::
 
     译者注：
     在分割任务中， 事物（thing）常被代指可以单独识别区分的离散对象，比如人，车，动物等。这些对象在图像中可以实例化，可以被单独框选，每个实例由自己的边界框或者分割掩码。
@@ -262,7 +262,7 @@ register_coco_instances("my_dataset", {}, "json_annotation.json", "path/to/image
 通常具有自己的类似配置，也需要更改。
 
 ```eval_rst
-.. tip：：
+.. tip::
 
    更改类数后，预训练模型中的某些层将变得不兼容，因此无法加载到新模型中。这是意料之中的，加载此类预训练模型将生成有关此类层的警告。
 
