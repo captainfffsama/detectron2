@@ -8,7 +8,7 @@
 如果您想要使一个自定义数据集可以复用 detectron2 的数据加载，
 你需要完成以下事情：
 
-1. __注册__ 您的数据集（即，告诉 dtectron2 如何获取您的数据集）。
+1. __注册__ 您的数据集（即，告诉 detectron2 如何获取您的数据集）。
 2. （可选）， 为您的数据集 __注册元数据__。
 
 接下来，我们将详细解释上述两个概念。
@@ -254,7 +254,7 @@ register_coco_instances("my_dataset", {}, "json_annotation.json", "path/to/image
 
 
 * 若要训练 Fast R-CNN（带有预计算的待选区）， `DATASETS.PROPOSAL_FILES_{TRAIN，TEST}`
-  需要匹配数据集。 待选区的格式参见[这里](../modules/data.html#detectron2.data.load_proposals_into_dataset）。
+  需要匹配数据集。 待选区的格式参见[这里](../modules/data.html#detectron2.data.load_proposals_into_dataset)。
 
 新模型
 （比如 [TensorMask](../../../projects/TensorMask)，
